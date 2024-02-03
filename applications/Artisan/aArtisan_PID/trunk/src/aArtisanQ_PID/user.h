@@ -20,15 +20,15 @@
 
 ////////////////////
 // Base configurations (leave only one uncommented)
-//#define CONFIG_PWM // slow PWM on OT1 (heater); fast PWM output (3.922kHz) on IO3 (DC fan); ZCD not required
-#define CONFIG_PAC2 // integral cycle control on OT1 (heater) and phase angle control on OT2 (fan); ZCD required on IO2
+#define CONFIG_PWM // slow PWM on OT1 (heater); fast PWM output (3.922kHz) on IO3 (DC fan); ZCD not required
+//#define CONFIG_PAC2 // integral cycle control on OT1 (heater) and phase angle control on OT2 (fan); ZCD required on IO2
 //#define CONFIG_PAC2_IO3HTR // fast PWM on IO3 (heater) and phase angle control on OT2 (fan); ZCD required on IO2
 //#define CONFIG_PAC2_IO3FAN // integral cycle control on OT1 (heater) and fast PWM control of IO3 (fan); ZCD required on IO2
 //#define CONFIG_PAC3 // integral cycle control on OT1 (heater) and phase angle control on OT2 (fan); ZCD required on IO3
 
 ////////////////////
 // Temperature Unit
-//#define CELSIUS // controls only the initial conditions.  Comment out for F.
+#define CELSIUS // controls only the initial conditions.  Comment out for F.
 
 ////////////////////
 // LCD Options
@@ -58,8 +58,8 @@
 /////////////////////
 // AC Power Options
 // Needed for CONFIG_PAC options
-#define FREQ60 // 60Hz
-//#define FREQ50 // 50Hz
+//#define FREQ60 // 60Hz
+#define FREQ50 // 50Hz
 
 ////////////////////
 // Thermocouple Input Options
@@ -77,8 +77,8 @@
 ////////////////////
 // Analogue inputs (optional)
 // Comment out if not required
-//#define ANALOGUE1 // if potentiometer connected on ANLG1
-//#define ANALOGUE2 // if potentiometer connected on ANLG2
+#define ANALOGUE1 // if potentiometer connected on ANLG1
+#define ANALOGUE2 // if potentiometer connected on ANLG2
 
 ////////////////////
 // Duty Cycle Adjustment Increment
@@ -115,7 +115,7 @@
 #define MAX_IO3 100  // Set output % for upper limit for IO3
 
 // cut power to Heater if fan duty is less than HTR_CUTOFF_FAN_VAL (to protect heater in air roaster). Set to 0 for no cutoff
-#define HTR_CUTOFF_FAN_VAL 0
+#define HTR_CUTOFF_FAN_VAL 30
 
 #define FAN_AUTO_COOL 100 // Set fan output duty for auto cool when using PID;STOP command
 
@@ -170,7 +170,7 @@
 //#define MEMORY_CHK
 
 // This turns on the "# xxxxxxx\n" acknowledgements after commands
-//#define ACKS_ON
+#define ACKS_ON
 
 ////////////////////
 // Output Pin Setup

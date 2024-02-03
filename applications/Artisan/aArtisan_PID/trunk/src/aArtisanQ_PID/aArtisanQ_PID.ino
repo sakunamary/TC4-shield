@@ -161,8 +161,9 @@
 // 20220225 Changed PID profile selection command format from PID,Px to PID,P,x
 //          Bug fixes in PID,SV and PID,P,x commands
 // 20230328 Bug fix in IO3;xxx command. MIN_IO3 and MAX_IO3 checks added.
+// 20240203 add ACK_DATA mode. so that ,
       
-#define BANNER_ARTISAN "aArtisanQ_PID 6_8"
+#define BANNER_ARTISAN "aArtisanQ_PID 6_9"
 
 // this library included with the arduino distribution
 #include <Wire.h>
