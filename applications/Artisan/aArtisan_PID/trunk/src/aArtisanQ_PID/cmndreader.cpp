@@ -270,10 +270,14 @@ boolean chanCmnd::doCommand(CmndParser *pars)
                     actv[i] = 0;
                 }
             }
-            // #ifdef ACKS_ON
+            #ifdef ACKS_ON
             Serial.print(F("# Active channels set to "));
             Serial.println(pars->paramStr(1));
-            // #endif
+            #endif           
+             #ifdef DATA_ACKS
+            Serial.print(F("#DATA_OUT,CHAN,"));
+            Serial.println(pars->paramStr(1));
+            #endif
         }
         return true;
     }
