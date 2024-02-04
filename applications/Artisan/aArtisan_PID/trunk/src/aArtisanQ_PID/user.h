@@ -170,7 +170,7 @@
 //#define MEMORY_CHK
 
 // This turns on the "# xxxxxxx\n" acknowledgements after commands
-#define ACKS_ON
+//#define ACKS_ON
 
 //This turns on the Serial sent out data of TC4 how is running ,so that extract modules can sync the running data with TC4 
 #define DATA_ACKS 
