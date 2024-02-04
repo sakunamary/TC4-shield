@@ -125,8 +125,8 @@
 
 ////////////////////
 // Temperature Reading Filters
-#define BT_FILTER 10 // filtering level (percent) for BT
-#define ET_FILTER 10 // filtering level (percent) for ET
+#define BT_FILTER 80 // filtering level (percent) for BT
+#define ET_FILTER 80 // filtering level (percent) for ET
 #define AMB_FILTER 70 // 70% filtering on ambient sensor readings
 
 // use RISE_FILTER to adjust the sensitivity of the RoR calculation
@@ -154,9 +154,9 @@
 // choose one of the following for the PWM time base for heater output on OT1 or OT2
 //#define TIME_BASE pwmN4sec  // recommended for Hottop D which has mechanical relay
 //#define TIME_BASE pwmN2sec
-#define TIME_BASE pwmN1Hz  // recommended for most electric heaters controlled by standard SSR
+//#define TIME_BASE pwmN1Hz  // recommended for most electric heaters controlled by standard SSR
 //#define TIME_BASE pwmN2Hz
-//#define TIME_BASE pwmN4Hz
+#define TIME_BASE pwmN4Hz
 //#define TIME_BASE pwmN8Hz 
 // The faster frequencies below are for advanced users only, and will require changes to the PWM16 Library
 //#define TIME_BASE 15 // approx. 977 Hz
