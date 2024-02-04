@@ -937,10 +937,12 @@ boolean resetCmnd::doCommand(CmndParser *pars)
     {
         // pBourbon = true;
         counter = 0;
+#ifndef DATA_ACKS
         Serial.println(F("# Reset")); // respond to pBourbon reset command
+#endif
 #ifdef DATA_ACKS
         Serial.println(F("#DATA_OUT,RST"));
-#endif        
+#endif
         return true;
     }
     else
@@ -1004,8 +1006,8 @@ boolean powerCmnd::doCommand(CmndParser *pars)
             Serial.println(levelIO3);
 #endif
 #ifdef DATA_ACKS
-                Serial.print(F("#DATA_OUT,IO3,"));
-                Serial.println(levelIO3);
+            Serial.print(F("#DATA_OUT,IO3,"));
+            Serial.println(levelIO3);
 #endif
 #else
             levelOT1 = atoi(pars->paramStr(1));
@@ -1019,8 +1021,8 @@ boolean powerCmnd::doCommand(CmndParser *pars)
             Serial.println(levelOT1);
 #endif
 #ifdef DATA_ACKS
-                Serial.print(F("#DATA_OUT,OT1,"));
-                Serial.println(levelOT1);
+            Serial.print(F("#DATA_OUT,OT1,"));
+            Serial.println(levelOT1);
 #endif
 #endif
 #else // PWM Mode
@@ -1035,8 +1037,8 @@ boolean powerCmnd::doCommand(CmndParser *pars)
             Serial.println(levelOT1);
 #endif
 #ifdef DATA_ACKS
-                Serial.print(F("#DATA_OUT,OT1,"));
-                Serial.println(levelOT1);
+            Serial.print(F("#DATA_OUT,OT1,"));
+            Serial.println(levelOT1);
 #endif
 #endif
         }
@@ -1077,8 +1079,8 @@ boolean fanCmnd::doCommand(CmndParser *pars)
             Serial.println(levelIO3);
 #endif
 #ifdef DATA_ACKS
-                Serial.print(F("#DATA_OUT,IO3,"));
-                Serial.println(levelIO3);
+            Serial.print(F("#DATA_OUT,IO3,"));
+            Serial.println(levelIO3);
 #endif
 #else
             levelOT2 = atoi(pars->paramStr(1));
@@ -1092,8 +1094,8 @@ boolean fanCmnd::doCommand(CmndParser *pars)
             Serial.println(levelOT2);
 #endif
 #ifdef DATA_ACKS
-                Serial.print(F("#DATA_OUT,OT2,"));
-                Serial.println(levelOT2);
+            Serial.print(F("#DATA_OUT,OT2,"));
+            Serial.println(levelOT2);
 #endif
 #endif
 #else
@@ -1108,8 +1110,8 @@ boolean fanCmnd::doCommand(CmndParser *pars)
             Serial.println(levelIO3);
 #endif
 #ifdef DATA_ACKS
-                Serial.print(F("#DATA_OUT,IO3,"));
-                Serial.println(levelIO3);
+            Serial.print(F("#DATA_OUT,IO3,"));
+            Serial.println(levelIO3);
 #endif
 #endif
         }
