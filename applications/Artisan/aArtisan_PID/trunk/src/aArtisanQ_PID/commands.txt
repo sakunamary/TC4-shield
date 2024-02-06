@@ -45,6 +45,7 @@ Turns the PID on or off.  PID always operates on OT1.
 Turning the PID off will result in output on OT1 being turned off.
 When PID is ON, additional values are streamed to serial:  heater duty, fan duty, SV
 DATA_ACKS :#DATA_OUT,PID,ON/#DATA_OUT,PID,OFF
+DATA_ACKS :#DATA_OUT,PID,OUT,temp,power
 
 PID,CHAN,i
 ----------
