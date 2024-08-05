@@ -161,8 +161,9 @@
 //          Bug fixes in PID,SV and PID,P,x commands
 // 20230328 Bug fix in IO3;xxx command. MIN_IO3 and MAX_IO3 checks added.
 // 20240203 add ACK_DATA mode. so that , extract modules can sync the running data with TC4
+// 20240805 add AHT20
 
-#define BANNER_ARTISAN "aArtisanQ_PID 6_9"
+#define BANNER_ARTISAN "aArtisanQ_PID 7_0"
 
 // this library included with the arduino distribution
 #include <Wire.h>
@@ -187,9 +188,10 @@
 #include <PWM16.h> // for SSR output
 
 // these "contributed" libraries must be installed in your sketchbook's arduino/libraries folder
-#include <cmndproc.h>     // for command interpreter
-#include <thermocouple.h> // type K, type J, and type T thermocouple support
-#include <cADC.h>         // MCP3424
+#include <cmndproc.h>      // for command interpreter
+#include <thermocouple.h>  // type K, type J, and type T thermocouple support
+#include <cADC.h>          // MCP3424
+#include "DFRobot_AHT20.h" //AHT20
 
 #if defined LCD_PARALLEL || defined LCDAPTER
 #include <cLCD.h> // required only if LCD is used
@@ -207,6 +209,7 @@
 #include <mcEEPROM.h>
 mcEEPROM eeprom;
 calBlock caldata;
+DFRobot_AHT20 aht20;
 
 float AT;               // ambient temp
 float T[NC];            // final output values referenced to physical channels 0-3
@@ -276,11 +279,11 @@ boolean first;
 uint16_t looptime = 1000;
 
 // class objects
-cADC adc(A_ADC);      // MCP3424
-ambSensor amb(A_AMB); // MCP9800
-filterRC fT[NC];      // filter for logged ET, BT
-filterRC fRise[NC];   // heavily filtered for calculating RoR
-filterRC fRoR[NC];    // post-filtering on RoR values
+cADC adc(A_ADC); // MCP3424
+// ambSensor amb(A_AMB); // MCP9800
+filterRC fT[NC];    // filter for logged ET, BT
+filterRC fRise[NC]; // heavily filtered for calculating RoR
+filterRC fRoR[NC];  // post-filtering on RoR values
 #ifndef PHASE_ANGLE_CONTROL
 PWM16 ssr; // object for SSR output on OT1, OT2
 #endif
@@ -550,9 +553,10 @@ void get_samples() // this function talks to the amb sensor and ADC via I2C
     int32_t itemp;
     float rx;
 
-    uint16_t dly = amb.getConvTime(); // use delay based on slowest conversion
+    // uint16_t dly = amb.getConvTime(); // use delay based on slowest conversion
     uint16_t dADC = adc.getConvTime();
-    dly = dly > dADC ? dly : dADC;
+    dly = aADC;
+    // dly = dly > dADC ? dly : dADC;
 
     for (uint8_t jj = 0; jj < NC; jj++)
     {                         // one-shot conversions on both chips
@@ -562,8 +566,8 @@ void get_samples() // this function talks to the amb sensor and ADC via I2C
             --k;
             tc = tcp[k];           // each channel may have its own TC type
             adc.nextConversion(k); // start ADC conversion on physical channel k
-            amb.nextConversion();  // start ambient sensor conversion
-            checkStatus(dly);      // give the chips time to perform the conversions
+            // amb.nextConversion();  // start ambient sensor conversion
+            checkStatus(dly); // give the chips time to perform the conversions
 
             if (!first)
             {                              // on first loop dont save zero values
@@ -573,14 +577,15 @@ void get_samples() // this function talks to the amb sensor and ADC via I2C
 
             ftimes[k] = millis(); // record timestamp for RoR calculations
 
-            amb.readSensor();                             // retrieve value from ambient temp register
-            v = adc.readuV();                             // retrieve microvolt sample from MCP3424
-            tempF = tc->Temp_F(0.001 * v, amb.getAmbF()); // convert uV to Celsius
+            // amb.readSensor();                             // retrieve value from ambient temp register
+            v = adc.readuV(); // retrieve microvolt sample from MCP3424
+
+            tempF = tc->Temp_F(0.001 * v, aht20.getTemperature_F()); // convert uV to Celsius for TypeK
 
             // filter on direct ADC readings, not computed temperatures
             v = fT[k].doFilter(v << 10); // multiply by 1024 to create some resolution for filter
             v >>= 10;
-            AT = amb.getAmbF();
+            AT = aht20.getTemperature_F();
             T[k] = tc->Temp_F(0.001 * v, AT); // convert uV to Fahrenheit;
 
             ftemps[k] = fRise[k].doFilter(tempF * 1000); // heavier filtering for RoR
@@ -716,7 +721,7 @@ void updateLCD()
             lcd.print(F("%"));
         }
 
-#else   // if PID_CONTROL isn't defined then always display OT1: nnn%
+#else  // if PID_CONTROL isn't defined then always display OT1: nnn%
         lcd.setCursor(0, 2);
         lcd.print(F("HTR:"));
         if (FAN_DUTY < HTR_CUTOFF_FAN_VAL)
@@ -729,8 +734,8 @@ void updateLCD()
         }
         lcd.print(st1);
         lcd.print(F("%"));
-#endif  // end ifdef PID_CONTROL
-        // #endif // end ifdef ANALOGUE1
+#endif // end ifdef PID_CONTROL
+       // #endif // end ifdef ANALOGUE1
 
         // #ifdef ANALOGUE2
         lcd.setCursor(0, 3);
@@ -1130,8 +1135,8 @@ void checkButtons()
                 counter = 0;
             }
             else if (buttons.keyPressed(2) && buttons.keyChanged(2))
-            {   // button 3 - ENTER BUTTON
-                // do something
+            { // button 3 - ENTER BUTTON
+              // do something
             }
             else if (buttons.keyPressed(3) && buttons.keyChanged(3))
             { // button 4 - CHANGE LCD MODE
@@ -1190,7 +1195,7 @@ void checkButtons()
             }
             break;
         } // end of switch
-    }     // end of if( buttons.readButtons() )
+    } // end of if( buttons.readButtons() )
 } // end of void checkButtons()
 #endif // end ifdef LCDAPTER
 
@@ -1500,13 +1505,13 @@ void setup()
     delay(100);
     Wire.begin();
     Serial.begin(BAUD);
-    amb.init(AMB_FILTER); // initialize ambient temp filtering
-
+    // amb.init(AMB_FILTER); // initialize ambient temp filtering
+    aht20.begin()；
 #if defined LCD_PARALLEL || defined LCDAPTER || defined LCD_I2C
 #ifdef LCD_4x20
-    lcd.begin(20, 4);
+        lcd.begin(20, 4);
 #else
-    lcd.begin(16, 2);
+        lcd.begin(16, 2);
 #endif
     BACKLIGHT;
     lcd.setCursor(0, 0);
